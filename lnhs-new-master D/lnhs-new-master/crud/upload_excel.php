@@ -26,18 +26,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
 
     // Load the uploaded Excel file
     $file = $_FILES['excelFile']['tmp_name'];
+    $schoolyear = $_POST['schoolyear'];
+    $grade = $_POST['grade'];            // Get grade
+    $section = $_POST['section'];        // Get section
+    $grade_section = $grade." ".$section;
     try {
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
         $data = $sheet->toArray();
-
         // Loop through the rows and insert data into the database
         foreach ($data as $row) {
             $learners_name = $row[0]; // Learner's name
-            $grade_section = $row[1]; // Grade & section
+            // $grade_section = $row[1]; // Grade & section
             // Normalize gender: Convert 'male' or 'female' to 'Male' or 'Female'
-            $gender = !empty($row[2]) ? ucwords(strtolower($row[2])) : 'Male'; // Default to 'Male' if empty
-            $school_year = $row[3]; // School year
+            $gender = isset($row[2]) ? trim(strtolower($row[2])) : 'male'; // Normalize input
+
+            // Ensure only 'Male' or 'Female' is inserted
+            if ($gender === 'male') {
+                $gender = 'Male';
+            } elseif ($gender === 'female') {
+                $gender = 'Female';
+            } else {
+                $gender = 'Male'; // Default to 'Male' if invalid value
+            }
+             // Default to 'Male' if empty
+            // $school_year = $row[3]; // School year
 
             // Generate a custom ID that starts with 2025 and ends with 3 random digits
             $random_digits = rand(100, 999);
@@ -62,15 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
             $insert_query = "INSERT INTO students (id, learners_name, `grade & section`, gender, school_year, user_id) 
                              VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($connection, $insert_query);
-            mysqli_stmt_bind_param($stmt, 'sssssi', $custom_id, $learners_name, $grade_section, $gender, $school_year, $userid);
+            mysqli_stmt_bind_param($stmt, 'sssssi', $custom_id, $learners_name, $grade_section, $gender, $schoolyear, $userid);
             mysqli_stmt_execute($stmt);
         }
 
         // Set success message in session
         $_SESSION['upload_success'] = 'The student data has been added successfully!';
-
         // Redirect to Crud.php
-        header('Location: Crud.php');
+        header('Location: view_masterlist.php');
         exit();
 
     } catch (Exception $e) {

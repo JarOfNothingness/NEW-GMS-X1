@@ -220,9 +220,16 @@
 </a>
    
 <!-- MASTERLIST -->
-<a href="../crud/Crud.php">
+    <a href="#" class="toggle-submenu" data-target="#masterlistSubmenu">
         <i class="fas fa-user-graduate"></i>
         <span>Masterlist</span>
+    </a>
+
+        <!-- Submenu under Masterlist -->
+    <ul class="submenu" id="masterlistSubmenu">
+        <li><a href="../crud/Crud.php">Create Class</a></li>
+        <li><a href="../crud/view_masterlist.php">View Master List</a></li> 
+    </ul>
   
     <!-- CLASS RECORD -->
     <a href="../Home/ClassRecord.php">

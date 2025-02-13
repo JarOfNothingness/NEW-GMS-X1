@@ -52,50 +52,153 @@ if (isset($_SESSION['upload_success'])) {
 
 ?>
 
-<div class="container mt-4">
-    <h3 class="text-dark">Student Records</h3>
-    <div class="box1 mb-3">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addStudentModal">ADD STUDENT</button>
-        <button class="btn btn-success" onclick="printPage()">
-            <i class="fas fa-print"></i> Print
-        </button>
+<body>
+    <div class="container mt-5">
+        
+        <form method="POST" action="upload_excel.php" id="uploadExcelForm" enctype="multipart/form-data">
+            <!-- Step 1 -->
+            <div id="step1" class="step">
+                <h3>Create Class</h3>
+                <div class="mb-3">
+    <label for="schoolyear" class="form-label">School Year</label>
+    <select class="form-control" id="schoolyear" name="schoolyear" required>
+        <?php
+        $currentYear = date("Y");
+        for ($i = 0; $i < 10; $i++) {
+            $startYear = $currentYear + $i;
+            $endYear = $startYear + 1;
+            echo "<option value='$startYear-$endYear'>$startYear-$endYear</option>";
+        }
+        ?>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label for="grade" class="form-label">Grade</label>
+    <select class="form-control" id="grade" name="grade" required>
+        <?php
+        for ($grade = 7; $grade <= 10; $grade++) {
+            echo "<option value='Grade $grade'>Grade $grade</option>";
+        }
+        ?>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label for="section" class="form-label">Section</label>
+    <select class="form-control" id="section" name="section" required>
+        <?php
+        $sections = ["Maharlika", "Rizal", "Bonifacio", "Mabini", "Lapu-Lapu", "Del Pilar", "Aguinaldo", "Jacinto", "Silang", "Luna"];
+        shuffle($sections);
+        foreach ($sections as $section) {
+            echo "<option value='$section'>$section</option>";
+        }
+        ?>
+    </select>
+</div>
+                <button type="button" class="btn btn-primary" id="next1">Next</button>
+            </div>
+            
+            <!-- Step 2 -->
+            <div id="step2" class="step" style="display:none;">
+                <h3>Add Student</h3>
+                <div class="mb-3">
+                    <label for="excelFile" class="form-label">Upload Excel File</label>
+                    <input type="file" class="form-control" id="excelFile" name="excelFile" accept=".xls, .xlsx" required>
+                    <small class="form-text text-muted">Only .xls and .xlsx files are allowed.</small>
+                </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="prev1">Previous</button>
+                <button type="submit" class="btn btn-primary" id="submitButton">Upload</button>
+            </div>
+            <div id="step3" class="step" style="display:none;">
+            <div class="container mt-4">
+                <h3 class="text-dark">Student Records</h3>
+                <div class="box1 mb-3">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addStudentModal">ADD STUDENT</button>
+                    <button class="btn btn-success" onclick="printPage()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+
+                
+                <?php if (mysqli_num_rows($result) == 0): ?>
+                    <p>No students found.</p>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Learner's Name</th>
+                                    <th>Grade </th>
+                                    <th>Grade & section</th>
+                                    <th>School Year</th>
+                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                $count = 1;
+                                while ($row = mysqli_fetch_assoc($result)): 
+                                ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
+                                        <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
+                                        <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td>
+                                        <td><?= htmlspecialchars($row['grade & section'] ?? ''); ?></td>
+                                        <td><?= htmlspecialchars($row['school_year'] ?? ''); ?></td>
+                                    
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+            </div>
+        </form>
     </div>
 
-    <!-- Table displaying student records -->
-    <?php if (mysqli_num_rows($result) == 0): ?>
-        <p>No students found.</p>
-    <?php else: ?>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Learner's Name</th>
-                        <th>Grade </th>
-                        <th>Grade & section</th>
-                        <th>School Year</th>
-                     
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $count = 1;
-                    while ($row = mysqli_fetch_assoc($result)): 
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['grade & section'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['school_year'] ?? ''); ?></td>
-                           
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
-</div>
+    <script>
+        // var uploadSuccess = <?php echo isset($_SESSION['isSuccess']) ? ($_SESSION['isSuccess'] ? 'true' : 'false') : 'false'; ?>;
+
+        $(document).ready(function() {
+           
+            // Step 1 to Step 2
+            $("#next1").click(function() {
+                $("#step1").hide();
+                $("#step2").show();
+            });
+
+            // Step 2 to Step 3
+            $("#next2").click(function() {
+                const username = $("#username").val();
+                const email = $("#email").val();
+                const password = $("#password").val();
+
+                $("#review_username").text(username);
+                $("#review_email").text(email);
+                $("#review_password").text(password);
+
+            });
+
+            // Step 2 back to Step 1
+            $("#prev1").click(function() {
+                $("#step2").hide();
+                $("#step1").show();
+            });
+
+            // // Step 3 back to Step 2
+            // if (uploadSuccess) {
+            //     $("#step1").hide();
+            //     $("#step2").hide();
+            //     $("#step3").show();
+            // }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
 <!-- Modal for Uploading Excel File -->
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
