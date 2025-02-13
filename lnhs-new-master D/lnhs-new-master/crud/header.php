@@ -5,6 +5,23 @@
 // header("Content-Type: text/html; charset=UTF-8"); // Optional: Define content type
 
 // Ensure no HTML or output before this
+    $userid = $_SESSION['userid'];
+
+    $query = "SELECT 
+        s.id,
+        s.learners_name, 
+        s.`grade & section`, 
+        s.gender, 
+        s.school_year
+        FROM 
+        students s
+        WHERE 
+        s.user_id = ?";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $userid);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -228,7 +245,11 @@
         <!-- Submenu under Masterlist -->
     <ul class="submenu" id="masterlistSubmenu">
         <li><a href="../crud/Crud.php">Create Class</a></li>
-        <li><a href="../crud/view_masterlist.php">View Master List</a></li> 
+        <?php if (mysqli_num_rows($result) != 0){
+            //echo mysqli_num_rows($result);
+            echo '<li><a href="../crud/view_masterlist.php">View Master List</a></li>';
+        } ?>
+      
     </ul>
   
     <!-- CLASS RECORD -->

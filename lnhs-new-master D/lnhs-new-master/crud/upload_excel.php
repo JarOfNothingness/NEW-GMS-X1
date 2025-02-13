@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include necessary libraries
-require '../vendor/autoload.php';  // Ensure the path is correct
+require '../../vendor/autoload.php';  // Ensure the path is correct
 use PhpOffice\PhpSpreadsheet\IOFactory;  // For loading Excel files
 
 include("../LoginRegisterAuthentication/connection.php");
@@ -36,19 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
         $data = $sheet->toArray();
         // Loop through the rows and insert data into the database
         foreach ($data as $row) {
-            $learners_name = $row[0]; // Learner's name
+            $learners_name = ucfirst($row[0]); // Learner's name
             // $grade_section = $row[1]; // Grade & section
             // Normalize gender: Convert 'male' or 'female' to 'Male' or 'Female'
-            $gender = isset($row[2]) ? trim(strtolower($row[2])) : 'male'; // Normalize input
+            $gender = ucfirst($row[1]); 
 
-            // Ensure only 'Male' or 'Female' is inserted
-            if ($gender === 'male') {
-                $gender = 'Male';
-            } elseif ($gender === 'female') {
-                $gender = 'Female';
-            } else {
-                $gender = 'Male'; // Default to 'Male' if invalid value
-            }
              // Default to 'Male' if empty
             // $school_year = $row[3]; // School year
 
