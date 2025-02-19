@@ -275,7 +275,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 </form>
             </div>
         </div>
-        <div class="row mt-5">
+        <!-- <div class="row mt-5">
             <div class="col-12">
                 <h3>Assessment Summary</h3>
                 <form id="generateSummaryForm" class="mb-3">
@@ -284,21 +284,21 @@ $assessmentsResult = $connection->query($assessmentsSql);
                             <label for="summary_grade_section" class="form-label">Grade & Section</label>
                             <select class="form-select" id="summary_grade_section" name="grade_section" required>
                                 <option value="">Select Grade & Section</option>
-                                <?php
+                                < ?php
                                 $gradeSectionResult->data_seek(0); // Reset the result pointer
                                 while($gradeSection = $gradeSectionResult->fetch_assoc()): 
                                 ?>
-                                    <option value="<?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
-                                        <?php echo htmlspecialchars($gradeSection['gradesection']); ?>
+                                    <option value="< ?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
+                                        < ?php echo htmlspecialchars($gradeSection['gradesection']); ?>
                                     </option>
-                                <?php endwhile; ?>
+                                < ?php endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="summary_subject" class="form-label">Subject</label>
                             <select class="form-select" id="summary_subject2" name="subject_id" required>
                                 <option value="">Select Subject</option>
-                                <?php 
+                                < ?php 
                                 $subjectsQuery = "SELECT DISTINCT description,subject_id FROM student_subjects WHERE student_id IN (SELECT id FROM students WHERE user_id = ?) ORDER BY description";
                                 $stmt = mysqli_prepare($connection, $subjectsQuery);
                                 mysqli_stmt_bind_param($stmt, 'i', $userid);
@@ -311,11 +311,11 @@ $assessmentsResult = $connection->query($assessmentsSql);
                                 while ($subject = mysqli_fetch_assoc($subjectsResult)):
                                     $subject_description = $subject['description'];
                                 ?>
-                                    <option value="<?php echo $subject['subject_id'] ; ?>"
-                                        <?php echo ($subject['subject_id'] == $selected_subject) ? 'selected' : ''; ?>>
-                                        <?php echo $subject_description; ?>
+                                    <option value="< ?php echo $subject['subject_id'] ; ?>"
+                                        < ?php echo ($subject['subject_id'] == $selected_subject) ? 'selected' : ''; ?>>
+                                        < ?php echo $subject_description; ?>
                                     </option>
-                                <?php endwhile; ?>
+                                < ?php endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -340,7 +340,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
             </div>
         </div>
 
-    </div>
+    </div> -->
     <div id="notificationArea"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
