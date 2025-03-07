@@ -231,11 +231,12 @@ $assessmentsResult = $connection->query($assessmentsSql);
                         </select>
                         <div class="invalid-feedback">Please select an assessment type.</div>
                     </div>
-                    <div class="mb-3">
-                        <label for="max_score" class="form-label">Max Score</label>
-                        <input type="number" class="form-control" id="max_score" name="max_score" required>
-                        <div class="invalid-feedback">Please enter a valid max score.</div>
-                    </div>
+                    <div class="mb-3" id="max_score_div" style="display: none;">
+    <label for="max_score" class="form-label">Max Score</label>
+    <input type="number" class="form-control" id="max_score" name="max_score" required>
+    <div class="invalid-feedback">Please enter a valid max score.</div>
+</div>
+
                     <div class="mb-3">
                         <label for="quarter" class="form-label">Quarter</label>
                         <select class="form-select" id="quarter" name="quarter" required>
@@ -275,7 +276,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 </form>
             </div>
         </div>
-        <div class="row mt-5">
+        <!-- <div class="row mt-5">
             <div class="col-12">
                 <h3>Assessment Summary</h3>
                 <form id="generateSummaryForm" class="mb-3">
@@ -284,21 +285,21 @@ $assessmentsResult = $connection->query($assessmentsSql);
                             <label for="summary_grade_section" class="form-label">Grade & Section</label>
                             <select class="form-select" id="summary_grade_section" name="grade_section" required>
                                 <option value="">Select Grade & Section</option>
-                                <?php
+                                < ?php
                                 $gradeSectionResult->data_seek(0); // Reset the result pointer
                                 while($gradeSection = $gradeSectionResult->fetch_assoc()): 
                                 ?>
-                                    <option value="<?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
-                                        <?php echo htmlspecialchars($gradeSection['gradesection']); ?>
+                                    <option value="< ?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
+                                        < ?php echo htmlspecialchars($gradeSection['gradesection']); ?>
                                     </option>
-                                <?php endwhile; ?>
+                                < ?php endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="summary_subject" class="form-label">Subject</label>
                             <select class="form-select" id="summary_subject2" name="subject_id" required>
                                 <option value="">Select Subject</option>
-                                <?php 
+                                < ?php 
                                 $subjectsQuery = "SELECT DISTINCT description,subject_id FROM student_subjects WHERE student_id IN (SELECT id FROM students WHERE user_id = ?) ORDER BY description";
                                 $stmt = mysqli_prepare($connection, $subjectsQuery);
                                 mysqli_stmt_bind_param($stmt, 'i', $userid);
@@ -311,11 +312,11 @@ $assessmentsResult = $connection->query($assessmentsSql);
                                 while ($subject = mysqli_fetch_assoc($subjectsResult)):
                                     $subject_description = $subject['description'];
                                 ?>
-                                    <option value="<?php echo $subject['subject_id'] ; ?>"
-                                        <?php echo ($subject['subject_id'] == $selected_subject) ? 'selected' : ''; ?>>
-                                        <?php echo $subject_description; ?>
+                                    <option value="< ?php echo $subject['subject_id'] ; ?>"
+                                        < ?php echo ($subject['subject_id'] == $selected_subject) ? 'selected' : ''; ?>>
+                                        < ?php echo $subject_description; ?>
                                     </option>
-                                <?php endwhile; ?>
+                                < ?php endwhile; ?>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -340,7 +341,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
             </div>
         </div>
 
-    </div>
+    </div> -->
     <div id="notificationArea"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -398,6 +399,30 @@ $assessmentsResult = $connection->query($assessmentsSql);
             });
         });
     });
+    $(document).ready(function() {
+    $('#assessment_type_id').change(function() {
+        var assessmentTypeId = $(this).val();
+        if (assessmentTypeId) {
+            $('#max_score_div').show();  // Show the max score input field
+            fetchMaxScore(assessmentTypeId);  // Fetch the max score for the selected assessment type
+        } else {
+            $('#max_score_div').hide();  // Hide the max score input field if no assessment type is selected
+        }
+    });
+
+    // Function to fetch max score based on selected assessment type (optional)
+    function fetchMaxScore(assessmentTypeId) {
+        $.ajax({
+            url: 'get_max_score.php',  // A new PHP file to fetch the max score from the database
+            type: 'GET',
+            data: { assessment_type_id: assessmentTypeId },
+            success: function(response) {
+                $('#max_score').val(response);  // Set the max score to the fetched value
+            }
+        });
+    }
+});
+
     </script>
 </body>
 </html>

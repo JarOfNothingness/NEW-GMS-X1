@@ -1,6 +1,7 @@
 <?php
 session_start(); // Start the session at the beginning
 
+// include("LoginRegisterAuthentication/connection.php");
 include("../LoginRegisterAuthentication/connection.php");
 
 $error_msg = ""; // Initialize error message variable

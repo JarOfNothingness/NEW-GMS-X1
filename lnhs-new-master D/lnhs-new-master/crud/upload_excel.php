@@ -5,7 +5,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include necessary libraries
-require '../../vendor/autoload.php';  // Ensure the path is correct
+require '../vendor/autoload.php';  // Ensure the path is correct
+// require '../../vendor/autoload.php';  // Ensure the path is correct
 use PhpOffice\PhpSpreadsheet\IOFactory;  // For loading Excel files
 
 include("../LoginRegisterAuthentication/connection.php");
@@ -30,19 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
     $grade = $_POST['grade'];            // Get grade
     $section = $_POST['section'];        // Get section
     $grade_section = $grade." ".$section;
+    $subjects = isset($_POST['subjects']) ? $_POST['subjects'] : [];
+    
     try {
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
         $data = $sheet->toArray();
+        
         // Loop through the rows and insert data into the database
         foreach ($data as $row) {
             $learners_name = ucfirst($row[0]); // Learner's name
-            // $grade_section = $row[1]; // Grade & section
-            // Normalize gender: Convert 'male' or 'female' to 'Male' or 'Female'
-            $gender = ucfirst($row[1]); 
-
-             // Default to 'Male' if empty
-            // $school_year = $row[3]; // School year
+            $gender = ucfirst($row[1]);        // Gender
 
             // Generate a custom ID that starts with 2025 and ends with 3 random digits
             $random_digits = rand(100, 999);
@@ -66,14 +65,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
             // Insert data into the students table with the custom ID
             $insert_query = "INSERT INTO students (id, learners_name, `grade & section`, gender, school_year, user_id) 
                              VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = mysqli_prepare($connection, $insert_query);
-            mysqli_stmt_bind_param($stmt, 'sssssi', $custom_id, $learners_name, $grade_section, $gender, $schoolyear, $userid);
-            mysqli_stmt_execute($stmt);
-        }
+            $stmt_students = mysqli_prepare($connection, $insert_query);
+            mysqli_stmt_bind_param($stmt_students, 'sssssi', $custom_id, $learners_name, $grade_section, $gender, $schoolyear, $userid);
+            mysqli_stmt_execute($stmt_students);
+
+            $student_id = mysqli_insert_id($connection);
+
+               
+            $subject_insert_query = "INSERT INTO student_subjects (student_id, subject_id, description) VALUES (?, ?, ?)";
+            $stmt_subject_insert = mysqli_prepare($connection, $subject_insert_query);
+            
+            foreach ($subjects as $subject) {
+
+                $subjectsQuery = "SELECT name,id FROM subjects WHERE name = ?";
+                $stmt = mysqli_prepare($connection, $subjectsQuery);
+                mysqli_stmt_bind_param($stmt, 's', $subject);
+                mysqli_stmt_execute($stmt);
+                $subjectsResult = mysqli_stmt_get_result($stmt);
+                $subjectsid=0;
+                while ($subjectss = mysqli_fetch_assoc($subjectsResult)){
+                    $subjectsid=$subjectss['id'];
+                }
+                
+                mysqli_stmt_bind_param($stmt_subject_insert, 'iis', $student_id, $subjectsid, $subject);
+                if (!mysqli_stmt_execute($stmt_subject_insert)) {
+                    throw new Exception("Error adding subject for student: " . mysqli_error($connection));
+                }
+            }
+
+            mysqli_stmt_close($stmt_subject_insert);
+            mysqli_stmt_close($stmt_students);
+        
+
+            // Commit transaction
+            mysqli_commit($connection);
+    }
 
         // Set success message in session
-        $_SESSION['upload_success'] = 'The student data has been added successfully!';
-        // Redirect to Crud.php
+        $_SESSION['upload_success'] = 'The student data has been added successfully and enrolled in all subjects!';
+        // Redirect to the view master list page
         header('Location: view_masterlist.php');
         exit();
 

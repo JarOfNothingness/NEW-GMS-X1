@@ -60,42 +60,48 @@ if (isset($_SESSION['upload_success'])) {
             <div id="step1" class="step">
                 <h3>Create Class</h3>
                 <div class="mb-3">
-    <label for="schoolyear" class="form-label">School Year</label>
-    <select class="form-control" id="schoolyear" name="schoolyear" required>
-        <?php
-        $currentYear = date("Y");
-        for ($i = 0; $i < 10; $i++) {
-            $startYear = $currentYear + $i;
-            $endYear = $startYear + 1;
-            echo "<option value='$startYear-$endYear'>$startYear-$endYear</option>";
-        }
-        ?>
-    </select>
-</div>
+                    <label for="schoolyear" class="form-label">School Year</label>
+                    <select class="form-control" id="schoolyear" name="schoolyear" required>
+                        <?php
+                        $currentYear = date("Y");
+                        for ($i = 0; $i < 10; $i++) {
+                            $startYear = $currentYear + $i;
+                            $endYear = $startYear + 1;
+                            echo "<option value='$startYear-$endYear'>$startYear-$endYear</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
-<div class="mb-3">
-    <label for="grade" class="form-label">Grade</label>
-    <select class="form-control" id="grade" name="grade" required>
-        <?php
-        for ($grade = 7; $grade <= 10; $grade++) {
-            echo "<option value='Grade $grade'>Grade $grade</option>";
-        }
-        ?>
-    </select>
-</div>
+                <div class="mb-3">
+                    <label for="grade" class="form-label">Grade</label>
+                    <select class="form-control" id="grade" name="grade" required>
+                        <?php
+                        for ($grade = 7; $grade <= 10; $grade++) {
+                            echo "<option value='Grade $grade'>Grade $grade</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
-<div class="mb-3">
-    <label for="section" class="form-label">Section</label>
-    <select class="form-control" id="section" name="section" required>
-        <?php
-        $sections = ["Maharlika", "Rizal", "Bonifacio", "Mabini", "Lapu-Lapu", "Del Pilar", "Aguinaldo", "Jacinto", "Silang", "Luna"];
-        shuffle($sections);
-        foreach ($sections as $section) {
-            echo "<option value='$section'>$section</option>";
-        }
-        ?>
-    </select>
-</div>
+                <div class="mb-3">
+                    <label for="section" class="form-label">Section</label>
+                    <select class="form-control" id="section" name="section" onchange="updateSubjects();" required>
+                        <?php
+                        $sections = ["Maharlika", "Rizal", "Bonifacio", "Mabini", "Lapu-Lapu", "Del Pilar", "Aguinaldo", "Jacinto", "Silang", "Luna"];
+                        shuffle($sections);
+                        foreach ($sections as $section) {
+                            echo "<option value='$section'>$section</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Subjects</label>
+                    <div id="subjectCheckboxes">
+                        <!-- Checkboxes will be dynamically added here -->
+                    </div>
+                </div>
                 <button type="button" class="btn btn-primary" id="next1">Next</button>
             </div>
             
@@ -110,90 +116,64 @@ if (isset($_SESSION['upload_success'])) {
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" id="prev1">Previous</button>
                 <button type="submit" class="btn btn-primary" id="submitButton">Upload</button>
             </div>
+            
             <div id="step3" class="step" style="display:none;">
-            <div class="container mt-4">
-                <h3 class="text-dark">Student Records</h3>
-                <div class="box1 mb-3">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#addStudentModal">ADD STUDENT</button>
-                    <button class="btn btn-success" onclick="printPage()">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                </div>
-
-                
-                <?php if (mysqli_num_rows($result) == 0): ?>
-                    <p>No students found.</p>
-                <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>Student ID</th>
-                                    <th>Learner's Name</th>
-                                    <th>Grade </th>
-                                    <th>Grade & section</th>
-                                    <th>School Year</th>
-                                
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                $count = 1;
-                                while ($row = mysqli_fetch_assoc($result)): 
-                                ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
-                                        <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
-                                        <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td>
-                                        <td><?= htmlspecialchars($row['grade & section'] ?? ''); ?></td>
-                                        <td><?= htmlspecialchars($row['school_year'] ?? ''); ?></td>
-                                    
-                                    </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
+                <div class="container mt-4">
+                    <h3 class="text-dark">Student Records</h3>
+                    <div class="box1 mb-3">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addStudentModal">ADD STUDENT</button>
+                        <button class="btn btn-success" onclick="printPage()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
                     </div>
-                <?php endif; ?>
-            </div>
+
+                    <?php if (mysqli_num_rows($result) == 0): ?>
+                        <p>No students found.</p>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Learner's Name</th>
+                                        <th>Grade</th>
+                                        <th>Grade & Section</th>
+                                        <th>School Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $count = 1;
+                                    while ($row = mysqli_fetch_assoc($result)): 
+                                    ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
+                                            <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
+                                            <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td>
+                                            <td><?= htmlspecialchars($row['grade & section'] ?? ''); ?></td>
+                                            <td><?= htmlspecialchars($row['school_year'] ?? ''); ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </form>
     </div>
 
     <script>
-        // var uploadSuccess = <?php echo isset($_SESSION['isSuccess']) ? ($_SESSION['isSuccess'] ? 'true' : 'false') : 'false'; ?>;
-
         $(document).ready(function() {
-           
-            // Step 1 to Step 2
             $("#next1").click(function() {
                 $("#step1").hide();
                 $("#step2").show();
             });
 
-            // Step 2 to Step 3
-            $("#next2").click(function() {
-                const username = $("#username").val();
-                const email = $("#email").val();
-                const password = $("#password").val();
-
-                $("#review_username").text(username);
-                $("#review_email").text(email);
-                $("#review_password").text(password);
-
-            });
-
-            // Step 2 back to Step 1
             $("#prev1").click(function() {
                 $("#step2").hide();
                 $("#step1").show();
             });
-
-            // // Step 3 back to Step 2
-            // if (uploadSuccess) {
-            //     $("#step1").hide();
-            //     $("#step2").hide();
-            //     $("#step3").show();
-            // }
         });
     </script>
 
@@ -225,6 +205,39 @@ if (isset($_SESSION['upload_success'])) {
     </div>
 </div>
 
+<?php
+
+// Add student to the database
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
+    // Process file and insert student records here
+    // For now, assuming the student data has been inserted into the 'students' table already.
+
+    // Fetch the student_id of the last inserted student
+    $student_id = mysqli_insert_id($connection);
+
+    // Insert student subjects
+    $subjects_query = "SELECT id FROM subjects";
+    $subjects_result = mysqli_query($connection, $subjects_query);
+
+    while ($subject = mysqli_fetch_assoc($subjects_result)) {
+        $subject_id = $subject['id'];
+        
+        // Insert into student_subjects table
+        $insert_query = "INSERT INTO student_subjects (student_id, subject_id, description) 
+                         VALUES (?, ?, ?)";
+        $description = "Assigned Subject"; // Default description
+        $stmt = mysqli_prepare($connection, $insert_query);
+        mysqli_stmt_bind_param($stmt, 'iis', $student_id, $subject_id, $description);
+        mysqli_stmt_execute($stmt);
+    }
+
+    $_SESSION['upload_success'] = "Student enrolled in all subjects.";
+    header("Location: Crud.php"); // Redirect after success
+    exit();
+}
+?>
+
+
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -252,6 +265,70 @@ if (isset($_SESSION['upload_success'])) {
     .table td:first-child {
         text-align: left;
     }
+    #subjectCheckboxes {
+        display: flex;
+        flex-wrap: wrap;
+    }
 </style>
+
+<script>
+function updateSubjects() {
+    var gradeSection = document.getElementById('grade');
+    var subjectCheckboxes = document.getElementById('subjectCheckboxes');
+   
+    
+    if (!gradeSection || !subjectCheckboxes)  return;
+
+    // Get selected grade
+    var selectedGrade = gradeSection.value.split(' ')[1];
+
+    console.log(selectedGrade);
+    
+    // Define subject lists
+    var commonSubjects = ['Math', 'Science', 'English', 'Araling Panlipunan', 'Mapeh', 'TLE', 'Filipino'];
+    var grade7Subjects = [...commonSubjects, 'Values'];
+    var upperGradeSubjects = [...commonSubjects, 'ESP'];
+    
+    // Select appropriate subjects based on grade
+    var subjects = selectedGrade === '7' ? grade7Subjects : upperGradeSubjects;
+
+    // Clear existing checkboxes
+    subjectCheckboxes.innerHTML = '';
+
+    // Create checkbox container
+    var checkboxContainer = document.createElement('div');
+    checkboxContainer.className = 'row';
+
+    // Create checkboxes
+    subjects.forEach(function(subject) {
+        var col = document.createElement('div');
+        col.className = 'col-md-6 mb-2';
+
+        var checkboxDiv = document.createElement('div');
+        checkboxDiv.className = 'form-check';
+
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'form-check-input';
+        input.id = 'subject_' + subject.toLowerCase().replace(/\s+/g, '_');
+        input.name = 'subjects[]';
+        input.value = subject;
+
+        console.log(input.id)
+
+        var label = document.createElement('label');
+        label.className = 'form-check-label';
+        label.htmlFor = input.id;
+        label.textContent = subject;
+
+        checkboxDiv.appendChild(input);
+        checkboxDiv.appendChild(label);
+        col.appendChild(checkboxDiv);
+        checkboxContainer.appendChild(col);
+    });
+
+    subjectCheckboxes.appendChild(checkboxContainer);
+}
+</script>
 
 <?php include("footer.php"); ?>
