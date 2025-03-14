@@ -4,6 +4,7 @@ ob_start(); // Start output buffering
 
 // Include the database connection and functions
 include_once("../LoginRegisterAuthentication/connection.php");
+// include_once("LoginRegisterAuthentication/connection.php");
 include_once("functions.php");
 include_once("headeradmin.php");
 
@@ -166,11 +167,11 @@ if (!$result) {
                 <h3>Pending User Approvals</h3>
                 <p><?php echo $totalPendingApprovals; ?></p>
             </div>
-            <div class="dashboard-card">
+            <!-- <div class="dashboard-card">
                 <i class="fas fa-clipboard-check"></i>
                 <h3>Pending Grade Approvals</h3>
                 <p><?php echo $totalPendingGradeApprovals; ?></p>
-            </div>
+            </div> -->
         </div>
         <!-- Teacher Details Modal -->
         <div class="modal fade" id="teacherDetailsModal" tabindex="-1" aria-labelledby="teacherDetailsModalLabel" aria-hidden="true">
@@ -221,8 +222,8 @@ if (!$result) {
                                 <?php endif; ?>
                                 <?php if ($row['role'] == 'Teacher'): ?>
                                     <a href="teacher_details.php?id=<?php echo htmlspecialchars($row['userid']); ?>" class="btn btn-primary btn-sm action-btn">View Details</a>
-                                    <a href="approve_grades.php?id=<?php echo htmlspecialchars($row['userid']); ?>" class="btn btn-secondary btn-sm action-btn">Approve Records</a>
-                                    <a href="view_class_record.php?teacher_id=<?php echo htmlspecialchars($row['userid']); ?>" class="btn btn-info btn-sm action-btn">View Class Record</a>
+                                    <!-- <a href="approve_grades.php?id=<?php echo htmlspecialchars($row['userid']); ?>" class="btn btn-secondary btn-sm action-btn">Approve Records</a>
+                                    <a href="view_class_record.php?teacher_id=<?php echo htmlspecialchars($row['userid']); ?>" class="btn btn-info btn-sm action-btn">View Class Record</a> -->
                                 <?php endif; ?>
                             </td>
                         </tr>

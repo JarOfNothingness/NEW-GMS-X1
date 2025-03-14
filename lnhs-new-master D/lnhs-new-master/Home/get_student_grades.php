@@ -1,5 +1,6 @@
 <?php
 include("../LoginRegisterAuthentication/connection.php");
+// include("LoginRegisterAuthentication/connection.php");
 
 if (isset($_GET['assessment_id'])) {
     $assessment_id = $_GET['assessment_id'];
@@ -35,7 +36,7 @@ if (isset($_GET['assessment_id'])) {
         }
         echo "</tbody></table>";
         echo "</div>";
-        echo "<button type='submit' class='btn btn-primary mt-3' name='updateGrades'><i class='fas fa-save me-2'></i>Update Grades</button>";
+        echo "<button type='submit' class='btn btn-primary mt-3' name='updateGrades'><i class='fas fa-save me-2'></i>Update Score</button>";
     } else {
         echo "<div class='alert alert-info'>No students found for this assessment.</div>";
     }

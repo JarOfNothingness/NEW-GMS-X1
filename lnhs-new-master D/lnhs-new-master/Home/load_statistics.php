@@ -1,5 +1,6 @@
 <?php
 session_start();
+// include("LoginRegisterAuthentication/connection.php");
 include("../LoginRegisterAuthentication/connection.php");
 
 // Enable error reporting for debugging

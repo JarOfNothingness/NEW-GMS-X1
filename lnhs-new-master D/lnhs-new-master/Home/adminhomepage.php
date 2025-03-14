@@ -13,6 +13,7 @@ if (isset($_SESSION['success_msg'])) {
 
 // Include the database connection
 include_once("../LoginRegisterAuthentication/connection.php");
+// include_once("LoginRegisterAuthentication/connection.php");
 
 // Check if the connection is successful
 if (!$connection) {

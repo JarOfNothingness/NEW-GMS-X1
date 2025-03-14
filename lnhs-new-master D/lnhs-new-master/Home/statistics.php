@@ -7,6 +7,7 @@ if (!isset($_SESSION['username'])) {
 }
 include("classrecordheader.php");
 include("../LoginRegisterAuthentication/connection.php");
+// include("LoginRegisterAuthentication/connection.php");
 
 $userid = $_SESSION['userid'];
 
@@ -343,7 +344,7 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.error("AJAX error: " + textStatus + ' : ' + errorThrown);
-                        alert('An error occurred while loading the statistics.');
+                        alert('An error occurred while loading the statistics.'+ textStatus);
                         $('#loadingMessage').fadeOut(300);
                     }
                 });

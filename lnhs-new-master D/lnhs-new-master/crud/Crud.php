@@ -97,7 +97,7 @@ if (isset($_SESSION['upload_success'])) {
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Subjects</label>
+                    <label class="form-label" id="label_subjects" hidden>Subjects</label>
                     <div id="subjectCheckboxes">
                         <!-- Checkboxes will be dynamically added here -->
                     </div>
@@ -274,6 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
 <script>
 function updateSubjects() {
     var gradeSection = document.getElementById('grade');
+    var subjectLabel = document.getElementById('label_subjects');
     var subjectCheckboxes = document.getElementById('subjectCheckboxes');
    
     
@@ -328,6 +329,7 @@ function updateSubjects() {
     });
 
     subjectCheckboxes.appendChild(checkboxContainer);
+    subjectLabel.removeAttribute("hidden");
 }
 </script>
 

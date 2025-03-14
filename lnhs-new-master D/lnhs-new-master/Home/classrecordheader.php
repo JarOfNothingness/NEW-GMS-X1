@@ -5,6 +5,27 @@
 // header("Content-Type: text/html; charset=UTF-8"); // Optional: Define content type
 
 // Ensure no HTML or output before this
+ob_start(); // Start output buffering
+// include("LoginRegisterAuthentication/connection.php");
+include("../LoginRegisterAuthentication/connection.php");
+
+    $userid = $_SESSION['userid'];
+
+    $query = "SELECT 
+        s.id,
+        s.learners_name, 
+        s.`grade & section`, 
+        s.gender, 
+        s.school_year
+        FROM 
+        students s
+        WHERE 
+        s.user_id = ?";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $userid);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -225,20 +246,38 @@
  
 
 <!-- MASTERLIST -->
-       <a href="../crud/Crud.php"  data-target="#masterlistSubmenu">
+<a href="#" class="toggle-submenu" data-target="#masterlistSubmenu">
         <i class="fas fa-user-graduate"></i>
         <span>Masterlist</span>
     </a>
-    
+    <ul class="submenu" id="masterlistSubmenu">
+        <li><a href="../crud/Crud.php">Create Class</a></li>
+        <?php if (mysqli_num_rows($result) != 0){
+            //echo mysqli_num_rows($result);
+            echo '<li><a href="../crud/view_masterlist.php">View Master List</a></li>';
+        } ?>
+      
+    </ul>
 
 
 
 
 
     <!-- CLASS RECORD -->
-    <a href="ClassRecord.php">
+    <a href="../Home/ClassRecord.php" class="toggle-submenu" data-target="#assesmentList">
         <i class="fas fa-book"></i>
         <span>Class Records</span>
+    </a>
+
+    <ul class="submenu" id="assesmentList">
+        <li><a href="../Home/ClassRecord.php">Create Assesment</a></li>
+        <li><a href="../Home/view_update_score.php">View Update Grades</a></li>
+        <li><a href="../Home/view_assessment_summary.php">View Assessment Summary</a></li>
+    </ul>
+
+    <a href="../Home/Attendance.php">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Attendance</span>
     </a>
    
 

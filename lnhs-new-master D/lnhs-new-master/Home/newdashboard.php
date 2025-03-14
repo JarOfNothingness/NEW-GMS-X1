@@ -13,6 +13,8 @@ if (isset($_SESSION['success_msg'])) {
 
 include("../LoginRegisterAuthentication/connection.php");
 include("../crud/header.php");
+// include("LoginRegisterAuthentication/connection.php");
+// include("crud/header.php");
 
 // Query for total students based on logged-in user
 $userid = $_SESSION['userid'];
@@ -222,11 +224,11 @@ mysqli_close($connection);
                 <h3>Failing Students</h3>
                 <p><?php echo $totalFailingStudents; ?></p>
             </div>
-            <div class="card">
+            <!-- <div class="card">
         <i class="fas fa-file-alt" onclick="window.location.href='recordRequest.php'" style="cursor:pointer"></i>
         <h3>Record Request</h3>
         <p>View</p>
-    </div>
+    </div> -->
         </div>
 
         <div class="clock" id="clock"></div>

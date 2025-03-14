@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include("../LoginRegisterAuthentication/connection.php");
+// include("LoginRegisterAuthentication/connection.php");
 $userid = $_SESSION['userid'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subject_id']) && isset($_POST['quarter'])) {

@@ -187,7 +187,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
         <?php endif; ?>
         
         <!-- <div class="row"> -->
-            <div id="step1" class="step">
+            <!-- <div id="step1" class="step">
                 <h3 class="mb-3">Add New Assessment</h3>
                 <form method="POST" action="" class="needs-validation" novalidate>
                     <div class="mb-3">
@@ -261,7 +261,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                         <i class="fas fa-eye me-2"></i>View Subject Scores
                     </a>
                 </form>
-            </div>
+            </div> -->
             
             <!-- <div id="step2" class="step" >
                 <h3 class="mb-3">Update Grades</h3>
@@ -282,7 +282,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 </form>
             </div> -->
         <!-- </div> -->
-        <!-- <div class="row mt-5">
+        <div class="row mt-5">
             <div class="col-12">
                 <h3>Assessment Summary</h3>
                 <form id="generateSummaryForm" class="mb-3">
@@ -345,7 +345,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 </form>
                 <div id="summaryTable" class="table-responsive"></div>
             </div>
-        </div> -->
+        </div>
 
     </div>
     <div id="notificationArea"></div>

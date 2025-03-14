@@ -253,10 +253,16 @@
     </ul>
   
     <!-- CLASS RECORD -->
-    <a href="../Home/ClassRecord.php">
+    <a href="../Home/ClassRecord.php" class="toggle-submenu" data-target="#assesmentList">
         <i class="fas fa-book"></i>
         <span>Class Records</span>
     </a>
+
+    <ul class="submenu" id="assesmentList">
+        <li><a href="../Home/ClassRecord.php">Create Assesment</a></li>
+        <li><a href="../Home/view_update_score.php">View Update Grades</a></li>
+        <li><a href="../Home/view_assessment_summary.php">View Assessment Summary</a></li>
+    </ul>
 
     <a href="../Home/Attendance.php">
         <i class="fas fa-clipboard-list"></i>
