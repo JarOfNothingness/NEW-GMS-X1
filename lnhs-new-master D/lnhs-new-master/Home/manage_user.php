@@ -148,9 +148,7 @@ if (!$result) {
                 <i class="fas fa-chalkboard-teacher"></i>
                 <h3>Total Teachers</h3>
                 <p><?php echo $totalTeachers; ?></p>
-                <button class="btn btn-primary btn-sm view-details-btn" data-bs-toggle="modal" data-bs-target="#teacherDetailsModal">
-                    View Details
-                </button>
+          
             </div>
             <div class="dashboard-card">
                 <i class="fas fa-book"></i>

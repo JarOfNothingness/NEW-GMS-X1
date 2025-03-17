@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 // Include necessary libraries
 // require '../vendor/autoload.php';  // Ensure the path is correct
-require '../../vendor/autoload.php';  // Ensure the path is correct
+require '../vendor/autoload.php';  // Ensure the path is correct
 use PhpOffice\PhpSpreadsheet\IOFactory;  // For loading Excel files
 
 include("../LoginRegisterAuthentication/connection.php");

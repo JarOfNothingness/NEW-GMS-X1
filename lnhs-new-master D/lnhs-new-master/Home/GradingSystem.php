@@ -7,8 +7,9 @@ if (!isset($_SESSION['username'])) {
 }
 ?>
 
-<?php include('../crud/header.php'); ?>
+
 <?php include("../LoginRegisterAuthentication/connection.php"); ?>
+<?php include("../crud/header.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
