@@ -1,7 +1,7 @@
 <?php
 session_start();
 // include("../LoginRegisterAuthentication/connection.php");
-include("LoginRegisterAuthentication/connection.php");
+include("../LoginRegisterAuthentication/connection.php");
 include("classrecordheader.php");
 
 if (!isset($_SESSION['username'])) {
@@ -296,7 +296,7 @@ $available_quarters = getAvailableQuarters(
 
         if (gradeSection !== '') {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            xhr.open('GET', '../crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {

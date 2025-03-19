@@ -452,7 +452,7 @@ function fetchSubjects(gradeSection) {
 
         if (gradeSection !== '') {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            xhr.open('GET', '../crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {

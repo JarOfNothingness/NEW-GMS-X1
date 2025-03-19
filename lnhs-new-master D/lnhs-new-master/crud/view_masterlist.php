@@ -18,6 +18,8 @@ $userid = $_SESSION['userid'];
 
 $gradeSection = '';
 $schoolyear = '';
+$section = $_POST['section'] ?? $_GET['section'] ?? 'GRADE & SECTION';
+$subject_id = $_POST['subject'] ?? $_GET['subject'] ?? 'SUBJECT';
 
 // Check if there is any record and fetch the values
 if ($row = mysqli_fetch_assoc($result)) {
@@ -25,6 +27,15 @@ if ($row = mysqli_fetch_assoc($result)) {
     $schoolyear = $row['school_year'];
 }
 
+echo "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var subjectDropdown = document.getElementById('subject');
+    var sectionDropdown = document.getElementById('section');
+    sectionDropdown.innerHTML = '<option value=\"" . htmlspecialchars($section) . "\">" . htmlspecialchars($section) . "</option>';
+    subjectDropdown.innerHTML = '<option value=\"" . htmlspecialchars($subject_id) . "\">" . htmlspecialchars($subject_id) . "</option>';
+
+});
+</script>";
 // Query to fetch student data based on filters
 $query = "SELECT 
             s.id,
@@ -240,7 +251,7 @@ if ($isFilterApplied) {
 
         if (gradeSection !== '') {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_subjects.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            xhr.open('GET', '../crud/fetch_subjects.php?grade_section=' + encodeURIComponent(gradeSection), true);
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {

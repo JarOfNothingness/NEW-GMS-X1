@@ -7,6 +7,39 @@ include("../crud/header.php");
 // include("crud/header.php");
 
 $userid = $_SESSION['userid'];
+$section = $_POST['section'] ?? $_GET['section'] ?? 'GRADE & SECTION';
+$subject_id = $_POST['subject_id'] ?? $_GET['subject_id'] ?? 'SUBJECT';
+
+if($subject_id == 1){
+    $subject_name = "Araling Panlipunan";
+}else if($subject_id == 2){
+    $subject_name = "English";
+}else if($subject_id == 3){
+    $subject_name = "Math";
+}else if($subject_id == 4){
+    $subject_name = "Science";
+}else if($subject_id == 5){
+    $subject_name = "Filipino";
+}else if($subject_id == 6){
+    $subject_name = "TLE";
+}else if($subject_id == 7){
+    $subject_name = "MAPEH";
+}else if($subject_id == 8){
+    $subject_name = "ESP";
+}else{
+    $subject_name = "Values";
+}
+
+
+echo "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var subjectDropdown = document.getElementById('subject_id');
+    var sectionDropdown = document.getElementById('section');
+    sectionDropdown.innerHTML = '<option value=\"" . htmlspecialchars($section) . "\">" . htmlspecialchars($section) . "</option>';
+    subjectDropdown.innerHTML = '<option value=\"" . htmlspecialchars($subject_id) . "\">" . htmlspecialchars($subject_name) . "</option>';
+
+});
+</script>";
 // Fetch school years
 $school_years_query = "SELECT DISTINCT school_year FROM students WHERE user_id=".$userid." ORDER BY school_year DESC";
 $school_years_result = mysqli_query($connection, $school_years_query);
@@ -27,6 +60,7 @@ $subject_id_other = 0;
 $month = $_POST['month'] ?? date('Y-m');
 
 $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
+
 
 // Only fetch attendance data if the form is submitted
 if ($form_submitted && $school_year && $section && $subject_id && $month) {
@@ -770,7 +804,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
         function fetchSections(schoolYear) {
             // Create AJAX request
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'crud/fetch_sections.php?school_year=' + schoolYear, true);
+            xhr.open('GET', '../crud/fetch_sections.php?school_year=' + schoolYear, true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     console.log(xhr.responseText)
@@ -786,7 +820,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
 
             if (gradeSection !== '') {
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+                xhr.open('GET', '../crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
                 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -803,6 +837,5 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
 </body>
 </html>
 
-<!-- <?php include("../crud/footer.php"); ?> -->
+ <?php include("../crud/footer.php"); ?> 
 
-<?php include("crud/footer.php"); ?>

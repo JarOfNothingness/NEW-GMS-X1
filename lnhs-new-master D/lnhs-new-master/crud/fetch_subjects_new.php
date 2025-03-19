@@ -34,7 +34,11 @@ if (!empty($gradeSection)) {
         $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
         
         // Prepare query to fetch subjects based on student IDs
-        $subjectsQuery = "SELECT DISTINCT id, description FROM student_subjects WHERE student_id IN ($placeholders) ORDER BY description";
+        $subjectsQuery = "SELECT MIN(id) as id, description, subject_id
+        FROM student_subjects 
+        WHERE student_id IN ($placeholders) 
+        GROUP BY description 
+        ORDER BY description";
         $stmt = mysqli_prepare($connection, $subjectsQuery);
         
         // Dynamically bind student IDs
@@ -45,7 +49,7 @@ if (!empty($gradeSection)) {
 
         // Generate options for subject dropdown
         while ($subject = mysqli_fetch_assoc($subjectsResult)) {
-            $options .= '<option value="' . htmlspecialchars($subject['id']) . '">' . htmlspecialchars($subject['description']) . '</option>';
+            $options .= '<option value="' . htmlspecialchars($subject['subject_id']) . '">' . htmlspecialchars($subject['description']) . '</option>';
         }
 
         echo $options;

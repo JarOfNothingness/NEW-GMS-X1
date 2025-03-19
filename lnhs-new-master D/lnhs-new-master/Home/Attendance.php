@@ -773,7 +773,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
     function fetchSections(schoolYear) {
         // Create AJAX request
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'crud/fetch_sections.php?school_year=' + schoolYear, true);
+        xhr.open('GET', '../crud/fetch_sections.php?school_year=' + schoolYear, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 console.log(xhr.responseText)
@@ -789,7 +789,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
 
         if (gradeSection !== '') {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'crud/fetch_subjects_attendance.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            xhr.open('GET', '../crud/fetch_subjects_attendance.php?grade_section=' + encodeURIComponent(gradeSection), true);
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -807,6 +807,5 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
 </body>
 </html>
 
-<!-- <?php include("../crud/footer.php"); ?> -->
+ <?php include("../crud/footer.php"); ?> 
 
-<?php include("crud/footer.php"); ?>
