@@ -5,7 +5,7 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 ?>
-
+<?php include('../LoginRegisterAuthentication/connection.php'); ?>
 <?php include('../crud/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">

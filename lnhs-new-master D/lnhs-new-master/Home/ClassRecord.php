@@ -9,7 +9,7 @@ if (!isset($_SESSION['username'])) {
 ob_start();
 include("classrecordheader.php");
 // include("../LoginRegisterAuthentication/connection.php");
-include("LoginRegisterAuthentication/connection.php");
+include("../LoginRegisterAuthentication/connection.php");
 ?>
 
 <!DOCTYPE html>

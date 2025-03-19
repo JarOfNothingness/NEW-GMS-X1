@@ -282,11 +282,7 @@ include("../LoginRegisterAuthentication/connection.php");
    
 
 
-    <a href="../Home/Attendance.php">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Attendance</span>
-    </a>
-
+  
 <!-- GradingSystem -->
 <a href="#" class="toggle-submenu" data-target="#gradingSystemSubmenu">
 

@@ -1,12 +1,14 @@
 <?php
+
 session_start();
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
-
-include('../crud/header.php');
 include("../LoginRegisterAuthentication/connection.php");
+include("../crud/header.php");
+
+
 
 // Fetch data from the grading_scale table
 $sql = "SELECT * FROM grading_scale ORDER BY transmuted_grade DESC";
