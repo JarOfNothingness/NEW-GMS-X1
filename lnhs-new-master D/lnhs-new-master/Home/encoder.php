@@ -5,9 +5,9 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-include('../LoginRegisterAuthentication/connection.php');
+// include('../LoginRegisterAuthentication/connection.php');
 
-// include('LoginRegisterAuthentication/connection.php');
+include('LoginRegisterAuthentication/connection.php');
 
 // Fetch learners from the students table
 $learnersQuery = "SELECT id, learners_name FROM students WHERE user_id = " .$_SESSION['userid'];

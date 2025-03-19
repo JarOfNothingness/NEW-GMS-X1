@@ -11,10 +11,10 @@ if (isset($_SESSION['success_msg'])) {
     unset($_SESSION['success_msg']); // Remove the success message from session
 }
 
-// include("LoginRegisterAuthentication/connection.php");
-// include("crud/header.php");
-include("../LoginRegisterAuthentication/connection.php");
-include("../crud/header.php");
+include("LoginRegisterAuthentication/connection.php");
+include("crud/header.php");
+// include("../LoginRegisterAuthentication/connection.php");
+// include("../crud/header.php");
 
 // Query for total students based on logged-in user
 $userid = $_SESSION['userid'];
