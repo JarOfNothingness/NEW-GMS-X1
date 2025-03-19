@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 
 include("../LoginRegisterAuthentication/connection.php");
 
+// include("LoginRegisterAuthentication/connection.php");
+
 if (!isset($_SESSION['username']) || !isset($_SESSION['userid'])) {
     echo "<script>window.location.href = '../Home/login.php';</script>";
     exit();

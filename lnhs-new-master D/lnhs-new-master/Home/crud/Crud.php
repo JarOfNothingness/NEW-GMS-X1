@@ -166,8 +166,45 @@ if (isset($_SESSION['upload_success'])) {
     <script>
         $(document).ready(function() {
             $("#next1").click(function() {
-                $("#step1").hide();
-                $("#step2").show();
+                const checkboxMath = document.getElementById('subject_math');
+                const checkboxScience = document.getElementById('subject_science');
+                const checkboxEnglish = document.getElementById('subject_english');
+                const checkboxAP = document.getElementById('subject_araling_panlipunan');
+                const checkboxMapeh = document.getElementById('subject_mapeh');
+                const checkboxTle = document.getElementById('subject_tle');
+                const checkboxFilipino = document.getElementById('subject_filipino');
+                const checkboxValues = document.getElementById('subject_values');
+
+                if (checkboxMath.checked) {
+                    $("#step1").hide();
+                    $("#step2").show();
+                } else if(checkboxScience.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxEnglish.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxAP.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxMapeh.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxTle.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxFilipino.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }else if(checkboxValues.checked){
+                    $("#step1").hide();
+                    $("#step2").show();
+                }
+                else {
+                    alert('Please select Subject');
+                }
+
+              
             });
 
             $("#prev1").click(function() {

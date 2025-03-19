@@ -5,6 +5,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 // Connect to the database
 include("../LoginRegisterAuthentication/connection.php");
+// include("LoginRegisterAuthentication/connection.php");
+// include("crud/header.php");
 include("../crud/header.php");
 $userid = $_SESSION['userid'];
 // Fetch school years
@@ -21,8 +23,8 @@ $subjects_result = mysqli_query($connection, $subjects_query);
 
 // Get selected values (if any) - Now checking both POST and GET
 $school_year = $_POST['school_year'] ?? $_GET['school_year'] ?? '';
-$section = $_POST['section'] ?? $_GET['section'] ?? '';
-$subject_id = $_POST['subject_id'] ?? $_GET['subject_id'] ?? '';
+$section = $_POST['section'] ?? $_GET['section'] ?? 'GRADE & SECTION';
+$subject_id = $_POST['subject_id'] ?? $_GET['subject_id'] ?? 'SUBJECT';
 $month = $_POST['month'] ?? $_GET['month'] ?? date('Y-m');
 $saved = $_GET['saved'] ?? 0;
 
@@ -38,13 +40,27 @@ if ($saved == 1) {
     echo "<script>
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-select the values in the form
+            var subjectDropdown = document.getElementById('subject_id');
+            var sectionDropdown = document.getElementById('section');
+            sectionDropdown.innerHTML = '<option value=\"" . htmlspecialchars($section) . "\">" . htmlspecialchars($section) . "</option>';
+            subjectDropdown.innerHTML = '<option value=\"" . htmlspecialchars($subject_id) . "\">" . htmlspecialchars($subject_id) . "</option>';
             document.querySelector('select[name=\"school_year\"]').value = '" . htmlspecialchars($school_year) . "';
             document.querySelector('select[name=\"section\"]').value = '" . htmlspecialchars($section) . "';
             document.querySelector('select[name=\"subject_id\"]').value = '" . htmlspecialchars($subject_id) . "';
             document.querySelector('input[name=\"month\"]').value = '" . htmlspecialchars($month) . "';
             
             // Automatically submit the form
-            document.querySelector('form').submit();
+             document.querySelector('form').submit();
+        });
+    </script>";
+}else{
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var subjectDropdown = document.getElementById('subject_id');
+            var sectionDropdown = document.getElementById('section');
+            sectionDropdown.innerHTML = '<option value=\"" . htmlspecialchars($section) . "\">" . htmlspecialchars($section) . "</option>';
+            subjectDropdown.innerHTML = '<option value=\"" . htmlspecialchars($subject_id) . "\">" . htmlspecialchars($subject_id) . "</option>';
+        
         });
     </script>";
 }
@@ -421,7 +437,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             <div class="col-md-6">
                 <div class="filters-container">
                 <form method="post" action="Attendance.php">
-                    <select name="school_year" required>
+                    <select name="school_year" id="school_year"  onchange="fetchSections(this.value)" required>
                         <option value="">SCHOOL YEAR</option>
                         <?php 
                         mysqli_data_seek($school_years_result, 0);
@@ -434,9 +450,9 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
                         <?php endwhile; ?>
                     </select>
 
-                    <select name="section" required>
+                    <select name="section" id= "section"  onchange="fetchSubjects(this.value)" required>
                         <option value="">GRADE & SECTION</option>
-                        <?php 
+                        <!-- <?php 
                         mysqli_data_seek($sections_result, 0);
                         while ($section_row = mysqli_fetch_assoc($sections_result)) : 
                         ?>
@@ -444,17 +460,12 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
                                 <?php echo ($section_row['grade & section'] == $section) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($section_row['grade & section']); ?>
                             </option>
-                        <?php endwhile; ?>
+                        <?php endwhile; ?> -->
                     </select>
 
-                    <select name="subject_id" required>
+                    <select name="subject_id" id="subject_id" required>
                         <option value="">SUBJECT</option>
-                        <?php foreach ($subject_names as $id => $name) : ?>
-                            <option value="<?php echo htmlspecialchars($id); ?>"
-                                <?php echo ($id == $subject_id) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($name); ?>
-                            </option>
-                        <?php endforeach; ?>
+                     
                     </select>
 
                     <input type="month" name="month" value="<?php echo htmlspecialchars($month); ?>" required>
@@ -506,6 +517,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             // Get the total number of days in the month and iterate
             $numDays = date('t', strtotime($month));
             $days_in_month = [];
+            $subid = 0;
             
             for ($i = 1; $i <= $numDays; $i++) {
                 $dayOfWeek = date('N', strtotime("$month-$i"));
@@ -528,7 +540,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
                 // Query to get attendance for the student
                 $attendanceQuery = "SELECT * FROM attendance WHERE student_id = ? AND user_id = ? AND month = ? AND subject_id = ?";
                 $attendanceStmt = $connection->prepare($attendanceQuery);
-                $attendanceStmt->bind_param("iiss", $userid,$student['id'], $month, $subject_id);
+                $attendanceStmt->bind_param("iiss", $student['id'], $userid, $month, $subid);
                 $attendanceStmt->execute();
                 $attendance = $attendanceStmt->get_result()->fetch_assoc();
             
@@ -757,9 +769,44 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             });
         }
     });
+
+    function fetchSections(schoolYear) {
+        // Create AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'crud/fetch_sections.php?school_year=' + schoolYear, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.responseText)
+                document.getElementById('section').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('subject_id');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'crud/fetch_subjects_attendance.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
     </script>
 
 </body>
 </html>
 
-<?php include("../crud/footer.php"); ?>
+<!-- <?php include("../crud/footer.php"); ?> -->
+
+<?php include("crud/footer.php"); ?>

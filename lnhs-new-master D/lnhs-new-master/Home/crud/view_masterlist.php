@@ -115,7 +115,7 @@ if ($isFilterApplied) {
         <div class="d-flex flex-wrap align-items-end gap-2">
             <div class="flex-grow-1">
                 <label for="school_year" class="form-label">School Year:</label>
-                <select class="form-select" id="school_year" name="school_year">
+                <select class="form-select" id="school_year" name="school_year" onchange="fetchSections(this.value)">
                     <option value="">All School Years</option>
                     <?php 
                     $schoolYearsQuery = "SELECT DISTINCT school_year FROM students WHERE user_id = ? ORDER BY school_year DESC";
@@ -133,41 +133,17 @@ if ($isFilterApplied) {
                 </select>
             </div>
             <div class="flex-grow-1">
-                <label for="section" class="form-label">Grade & Section:</label>
-                <select class="form-select" id="section" name="section">
+            <label for="section" class="form-label">Grade & Section:</label>
+                <select class="form-select" id="section" name="section" onchange="fetchSubjects(this.value)">
                     <option value="">All Grade & Section</option>
-                    <?php 
-                    $sectionsQuery = "SELECT DISTINCT `grade & section` FROM students WHERE user_id = ? ORDER BY `grade & section`";
-                    $stmt = mysqli_prepare($connection, $sectionsQuery);
-                    mysqli_stmt_bind_param($stmt, 'i', $userid);
-                    mysqli_stmt_execute($stmt);
-                    $sectionsResult = mysqli_stmt_get_result($stmt);
-                    while ($section = mysqli_fetch_assoc($sectionsResult)):
-                        $selected = (isset($_GET['section']) && $_GET['section'] == $section['grade & section']) ? 'selected' : '';
-                    ?>
-                        <option value="<?= htmlspecialchars($section['grade & section']) ?>" <?= $selected ?>>
-                            <?= htmlspecialchars($section['grade & section']) ?>
-                        </option>
-                    <?php endwhile; ?>
+                    <!-- Options will be loaded dynamically using AJAX -->
                 </select>
             </div>
             <div class="flex-grow-1">
                 <label for="subject" class="form-label">Subject:</label>
                 <select class="form-select" id="subject" name="subject">
                     <option value="">All Subjects</option>
-                    <?php 
-                    $subjectsQuery = "SELECT DISTINCT description FROM student_subjects WHERE student_id IN (SELECT id FROM students WHERE user_id = ?) ORDER BY description";
-                    $stmt = mysqli_prepare($connection, $subjectsQuery);
-                    mysqli_stmt_bind_param($stmt, 'i', $userid);
-                    mysqli_stmt_execute($stmt);
-                    $subjectsResult = mysqli_stmt_get_result($stmt);
-                    while ($subject = mysqli_fetch_assoc($subjectsResult)):
-                        $selected = (isset($_GET['subject']) && $_GET['subject'] == $subject['description']) ? 'selected' : '';
-                    ?>
-                        <option value="<?= htmlspecialchars($subject['description']) ?>" <?= $selected ?>>
-                            <?= htmlspecialchars($subject['description']) ?>
-                        </option>
-                    <?php endwhile; ?>
+
                 </select>
             </div>
             <div class="mt-4">
@@ -243,5 +219,40 @@ if ($isFilterApplied) {
         text-align: left;
     }
 </style>
+
+<script>
+    function fetchSections(schoolYear) {
+        // Create AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_sections.php?school_year=' + schoolYear, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.responseText)
+                document.getElementById('section').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('subject');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'fetch_subjects.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
+</script>
 
 <?php include("footer.php"); ?>

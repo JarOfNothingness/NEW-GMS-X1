@@ -1,6 +1,7 @@
 <?php
 session_start();
-include("../LoginRegisterAuthentication/connection.php");
+// include("../LoginRegisterAuthentication/connection.php");
+include("LoginRegisterAuthentication/connection.php");
 include("classrecordheader.php");
 
 if (!isset($_SESSION['username'])) {
@@ -69,7 +70,7 @@ if ($selected_grade_section && $selected_subject && $selected_quarter) {
     }
 }
 
-function getAvailableQuarters($connection, $grade_section = null, $subject_id = null, $userid) {
+function getAvailableQuarters($connection, $userid, $grade_section = null, $subject_id = null) {
     $quarters = array();
     
     $query = "SELECT DISTINCT a.quarter 
@@ -162,7 +163,7 @@ $available_quarters = getAvailableQuarters(
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label for="grade_section" class="form-label">Grade & Section</label>
-                    <select name="grade_section" id="grade_section" class="form-select" required>
+                    <select name="grade_section" id="grade_section" class="form-select" onchange="fetchSubjects(this.value)" required>
                         <option value="">Select Grade & Section</option>
                         <?php while ($row = $gradeSectionResult->fetch_assoc()): ?>
                             <option value="<?php echo htmlspecialchars($row['gradesection']); ?>"
@@ -288,6 +289,27 @@ $available_quarters = getAvailableQuarters(
             updateQuarters();
         });
     });
+
+    function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('subject_id');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
+
     </script>
 </body>
 </html>

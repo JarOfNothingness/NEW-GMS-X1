@@ -192,7 +192,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 <form method="POST" action="" class="needs-validation" novalidate>
                     <div class="mb-3">
                         <label for="grade_section" class="form-label">Grade & Section</label>
-                        <select class="form-select" id="grade_section" name="grade_section" required>
+                        <select class="form-select" id="grade_section" name="grade_section" onchange="fetchSubjects(this.value)">
                             <option value="">Select Grade & Section</option>
                             <?php while($gradeSection = $gradeSectionResult->fetch_assoc()): ?>
                                 <option value="<?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
@@ -445,6 +445,26 @@ $assessmentsResult = $connection->query($assessmentsSql);
          
     //     });    
 });
+
+function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('summary_subject');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
 
 
     </script>

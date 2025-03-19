@@ -2,6 +2,10 @@
 session_start();
 include("../LoginRegisterAuthentication/connection.php");
 include("../crud/header.php");
+
+// include("LoginRegisterAuthentication/connection.php");
+// include("crud/header.php");
+
 $userid = $_SESSION['userid'];
 // Fetch school years
 $school_years_query = "SELECT DISTINCT school_year FROM students WHERE user_id=".$userid." ORDER BY school_year DESC";
@@ -19,6 +23,7 @@ $subjects_result = mysqli_query($connection, $subjects_query);
 $school_year = $_POST['school_year'] ?? '';
 $section = $_POST['section'] ?? '';
 $subject_id = $_POST['subject_id'] ?? '';
+$subject_id_other = 0;
 $month = $_POST['month'] ?? date('Y-m');
 
 $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
@@ -40,7 +45,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
               WHERE s.`grade & section` = ? AND s.school_year = ?
               ORDER BY s.learners_name";
     $stmt = $connection->prepare($query);
-    $stmt->bind_param("siss", $month, $subject_id, $section, $school_year);
+    $stmt->bind_param("siss", $month, $subject_id_other, $section, $school_year);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -455,15 +460,15 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
                 <button class="close-button" onclick="toggleOverlay()">&times;</button>
             </div>
             <div class="overlay-content">
-                <button class="overlay-button">FORM 14</button>
-                <button class="overlay-button">FORM 2</button>
-                <button class="overlay-button">FORM 137</button>
+                <a href="form14_template.php" class="overlay-button">FORM 14</a>
+                <!-- <button class="overlay-button">FORM 2</button> -->
+                <a href="form137.php" class="overlay-button">FORM 137</a>
             </div>
         </div>
         <div class="filters-container">
             <form method="post" action="" class="inline-form">
                 <div class="form-group">
-                    <select name="school_year" required>
+                    <select name="school_year" id="school_year" onchange="fetchSections(this.value)" required>
                         <option value="">SCHOOL YEAR</option>
                         <?php while ($year = mysqli_fetch_assoc($school_years_result)) : ?>
                             <option value="<?php echo htmlspecialchars($year['school_year']); ?>"
@@ -474,25 +479,25 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
                     </select>
                 </div>
                 <div class="form-group">
-                    <select name="section" required>
+                    <select name="section" id="section" onchange="fetchSubjects(this.value)" required>
                         <option value="">GRADE & SECTION</option>
-                        <?php while ($section_row = mysqli_fetch_assoc($sections_result)) : ?>
+                        <!-- <?php while ($section_row = mysqli_fetch_assoc($sections_result)) : ?>
                             <option value="<?php echo htmlspecialchars($section_row['grade & section']); ?>"
                                 <?php echo ($section_row['grade & section'] == $section) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($section_row['grade & section']); ?>
                             </option>
-                        <?php endwhile; ?>
+                        <?php endwhile; ?> -->
                     </select>
                 </div>
                 <div class="form-group">
-                    <select name="subject_id" required>
+                    <select name="subject_id" id="subject_id">
                         <option value="">SUBJECT</option>
-                        <?php while ($subject = mysqli_fetch_assoc($subjects_result)) : ?>
+                        <!-- <?php while ($subject = mysqli_fetch_assoc($subjects_result)) : ?>
                             <option value="<?php echo htmlspecialchars($subject['id']); ?>"
                                 <?php echo ($subject['id'] == $subject_id) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($subject['name']); ?>
                             </option>
-                        <?php endwhile; ?>
+                        <?php endwhile; ?> -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -629,6 +634,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
         <button onclick="printAttendance()" class="print-button">Print Attendance</button>
     </div>
     <script>
+
         function toggleOverlay() {
             var overlay = document.getElementById('reportsOverlay');
             var button = document.getElementById('reportsButton');
@@ -758,8 +764,45 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
         document.addEventListener('DOMContentLoaded', function() {
             autoLoadAttendance();
         });
+
     </script>
+    <script>
+        function fetchSections(schoolYear) {
+            // Create AJAX request
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'crud/fetch_sections.php?school_year=' + schoolYear, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText)
+                    document.getElementById('section').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        function fetchSubjects(gradeSection) {
+            var subjectDropdown = document.getElementById('subject_id');
+            subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+            if (gradeSection !== '') {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+                
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        subjectDropdown.innerHTML = xhr.responseText;
+                    }
+                };
+                
+                xhr.send();
+            } else {
+                subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+            }
+        }
+     </script>
 </body>
 </html>
 
-<?php include("../crud/footer.php"); ?>
+<!-- <?php include("../crud/footer.php"); ?> -->
+
+<?php include("crud/footer.php"); ?>
