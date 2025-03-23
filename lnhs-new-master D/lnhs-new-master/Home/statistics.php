@@ -224,7 +224,7 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
                         <label for="school_year" class="form-label">
                             <i class="fas fa-calendar me-2"></i>School Year
                         </label>
-                        <select id="school_year" name="school_year" class="form-control">
+                        <select id="school_year" name="school_year" class="form-control" onchange="fetchSections(this.value)">
                             <option value="">All School Years</option>
                             <?php while ($row = mysqli_fetch_assoc($school_years_result)): ?>
                                 <option value="<?php echo htmlspecialchars($row['school_year']); ?>"
@@ -238,14 +238,14 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
                         <label for="grade_section" class="form-label">
                             <i class="fas fa-users me-2"></i>Grade & Section
                         </label>
-                        <select id="grade_section" name="grade_section" class="form-control">
+                        <select id="grade_section" name="grade_section" class="form-control" onchange="fetchSubjects(this.value)">
                             <option value="">All Grade & Section</option>
-                            <?php while ($row = mysqli_fetch_assoc($grade_sections_result)): ?>
+                            <!-- <?php while ($row = mysqli_fetch_assoc($grade_sections_result)): ?>
                                 <option value="<?php echo htmlspecialchars($row['grade & section']); ?>"
                                     <?php echo ($current_grade_section == $row['grade & section']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($row['grade & section']); ?>
                                 </option>
-                            <?php endwhile; ?>
+                            <?php endwhile; ?> -->
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -254,12 +254,12 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
                         </label>
                         <select id="subject" name="subject" class="form-control">
                             <option value="">All Subjects</option>
-                            <?php while ($row = mysqli_fetch_assoc($subjects_result)): ?>
+                            <!-- <?php while ($row = mysqli_fetch_assoc($subjects_result)): ?>
                                 <option value="<?php echo $row['id']; ?>"
                                     <?php echo ($current_subject == $row['id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($row['name']); ?>
                                 </option>
-                            <?php endwhile; ?>
+                            <?php endwhile; ?> -->
                         </select>
                     </div>
                 </div>
@@ -354,6 +354,39 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
                 loadStatistics();
             }
         });
+
+        function fetchSections(schoolYear) {
+        // Create AJAX request
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '../crud/fetch_sections.php?school_year=' + schoolYear, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText)
+                    document.getElementById('grade_section').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+    function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('subject');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '../crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
     </script>
 </body>
 </html>

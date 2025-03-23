@@ -103,7 +103,7 @@ function insertPointSetter($connection, $userid, $subjectId, $presentPoints, $ab
               points_excused = VALUES(points_excused)";
     
     $stmt = $connection->prepare($query);
-    $stmt->bind_param("iiiiii", $userId, $subjectId, $presentPoints, $absentPoints, $latePoints, $excusedPoints);
+    $stmt->bind_param("iiiiii", $userid, $subjectId, $presentPoints, $absentPoints, $latePoints, $excusedPoints);
     
     return $stmt->execute();
 }
@@ -493,9 +493,9 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
         // Attendance Sheet View
         ?>
         <h2</h2>
-        <div class="button-container">
+        <!-- <div class="button-container">
             <button id="openModalBtn" onclick="openModal()">Point Setter</button>
-        </div>
+        </div> -->
         <?php
 
 
@@ -521,7 +521,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             
             for ($i = 1; $i <= $numDays; $i++) {
                 $dayOfWeek = date('N', strtotime("$month-$i"));
-                if ($dayOfWeek < 7) { // Include Monday (1) to Saturday (6)
+                if ($dayOfWeek < 6) { // Include Monday (1) to Saturday (6)
                     $dayName = date('D', strtotime("$month-$i"));
                     echo "<th class='date-column'>" . $dayName . "<br>" . str_pad($i, 2, '0', STR_PAD_LEFT) . "</th>";
                     $days_in_month[] = $i;

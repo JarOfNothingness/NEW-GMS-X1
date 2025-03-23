@@ -488,15 +488,17 @@ function fetchLearnerDetails(learnerId) {
                 return response.json();
             })
             .then(learner => {
+                console.log(learner);
                 populateLearnerFields(learner);
                 // After populating basic details, fetch the final grade
-                return fetch(`get_final_grade.php?student_id=${learnerId}&subject_id=2`); // Assuming subject_id 2 for now
+                return fetch(`get_final_grade.php?student_id=${learnerId}&subject_id=${learner.subject_id}`); // Assuming subject_id 2 for now
             })
             .then(response => {
                 if (!response.ok) throw new Error('Failed to fetch grade data');
                 return response.json();
             })
             .then(gradeData => {
+                console.log(gradeData);
                 if (gradeData.success && gradeData.final_grade) {
                     // Populate the general average field
                     document.querySelector('input[name="general_average"]').value = gradeData.final_grade;

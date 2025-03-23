@@ -282,14 +282,14 @@ $female_stats = ['total' => 0, 'passing' => 0];
         <div class="header">
             <h1 class="school-name">LANAO NATIONAL HIGH SCHOOL</h1>
             <p>Lanao, Pilar, Cebu</p>
-            <p>School Year: <?php echo htmlspecialchars($school_year ?: '2023-2024'); ?></p>
+            <p>School Year: <?php echo htmlspecialchars($school_year ?: ' '); ?></p>
             <h2>Form 14 - Student Record</h2>
         </div>
         <div class="class-info">
             <div class="info-item">
                 <i class="fas fa-users"></i>
                 <span class="info-label">Grade & Section:</span>
-                <span class="info-value"><?php echo htmlspecialchars($section ?: 'Grade 7 - Peace'); ?></span>
+                <span class="info-value"><?php echo htmlspecialchars($section ?: ' '); ?></span>
             </div>
             <div class="info-item">
                 <i class="fas fa-book"></i>
@@ -305,7 +305,7 @@ $female_stats = ['total' => 0, 'passing' => 0];
                         $subject_name = $subject_result->fetch_assoc()['name'];
                         echo htmlspecialchars($subject_name);
                     } else {
-                        echo 'Mathematics';
+                        echo ' ';
                     }
                     ?>
                 </span>
@@ -314,7 +314,7 @@ $female_stats = ['total' => 0, 'passing' => 0];
 
         <form method="GET" action="" class="filters-container">
             <div class="filter-group">
-                <select name="school_year" required>
+                <select name="school_year" onchange="fetchSections(this.value)" required>
                     <option value="">Select School Year</option>
                     <?php while ($year = mysqli_fetch_assoc($school_years_result)) : ?>
                         <option value="<?php echo htmlspecialchars($year['school_year']); ?>"
@@ -326,26 +326,26 @@ $female_stats = ['total' => 0, 'passing' => 0];
             </div>
 
             <div class="filter-group">
-                <select name="section" required>
+                <select name="section" id="section" onchange="fetchSubjects(this.value)" required>
                     <option value="">Select Grade & Section</option>
-                    <?php while ($section_row = mysqli_fetch_assoc($sections_result)) : ?>
+                    <!-- <?php while ($section_row = mysqli_fetch_assoc($sections_result)) : ?>
                         <option value="<?php echo htmlspecialchars($section_row['grade & section']); ?>"
                                 <?php echo ($section_row['grade & section'] == $section) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($section_row['grade & section']); ?>
                         </option>
-                    <?php endwhile; ?>
+                    <?php endwhile; ?> -->
                 </select>
             </div>
 
             <div class="filter-group">
-                <select name="subject_id" required>
+                <select name="subject_id" id="subject_id" required>
                     <option value="">Select Subject</option>
-                    <?php while ($subject = mysqli_fetch_assoc($subjects_result)) : ?>
+                    <!-- <?php while ($subject = mysqli_fetch_assoc($subjects_result)) : ?>
                         <option value="<?php echo htmlspecialchars($subject['id']); ?>"
                                 <?php echo ($subject['id'] == $subject_id) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($subject['name']); ?>
                         </option>
-                    <?php endwhile; ?>
+                    <?php endwhile; ?> -->
                 </select>
             </div>
 
@@ -442,6 +442,39 @@ $female_stats = ['total' => 0, 'passing' => 0];
         document.addEventListener('DOMContentLoaded', function() {
             // Add any initialization code here
         });
+
+        function fetchSections(schoolYear) {
+        // Create AJAX request
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../crud/fetch_sections.php?school_year=' + schoolYear, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.responseText)
+                document.getElementById('section').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    function fetchSubjects(gradeSection) {
+        var subjectDropdown = document.getElementById('subject_id');
+        subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (gradeSection !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '../crud/fetch_subjects_new.php?grade_section=' + encodeURIComponent(gradeSection), true);
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    subjectDropdown.innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send();
+        } else {
+            subjectDropdown.innerHTML = '<option value="">All Subjects</option>';
+        }
+    }
     </script>
 </body>
 </html>

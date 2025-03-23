@@ -3,7 +3,9 @@ include('../LoginRegisterAuthentication/connection.php');
 
 if (isset($_GET['id'])) {
     $learnerId = $_GET['id'];
-    $query = "SELECT learners_name, school_year FROM students WHERE id = ?";
+    $query = "SELECT  learners_name, school_year, student_subjects.subject_id FROM students 
+        INNER JOIN student_subjects on student_subjects.student_id =  students.id
+        WHERE students.id = ?";
     $stmt = mysqli_prepare($connection, $query);
     mysqli_stmt_bind_param($stmt, 'i', $learnerId);
     mysqli_stmt_execute($stmt);

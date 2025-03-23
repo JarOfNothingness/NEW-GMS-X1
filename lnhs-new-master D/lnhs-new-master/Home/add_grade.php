@@ -192,7 +192,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
                 <form method="POST" action="" class="needs-validation" novalidate>
                     <div class="mb-3">
                         <label for="grade_section" class="form-label">Grade & Section</label>
-                        <select class="form-select" id="grade_section" name="grade_section" onchange="fetchSubjects(this.value)">
+                        <select class="form-select" id="grade_section" name="grade_section" onchange="fetchSubjects(this.value)" required>
                             <option value="">Select Grade & Section</option>
                             <?php while($gradeSection = $gradeSectionResult->fetch_assoc()): ?>
                                 <option value="<?php echo htmlspecialchars($gradeSection['gradesection']); ?>">
