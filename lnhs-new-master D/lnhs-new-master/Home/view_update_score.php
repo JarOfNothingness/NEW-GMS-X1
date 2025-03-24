@@ -128,6 +128,30 @@ $assessmentsResult = $connection->query($assessmentsSql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        }
+        header {
+                background-color: #4a69bd;
+                padding: 20px;
+                color: #fff;
+                font-size: 24px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                border-radius: 15px;
+        }
+
+        .header-text {
+                text-align: center;
+                margin: 0;
+        }
+
         body {
             background-color: #f8f9fa;
         }
@@ -172,8 +196,11 @@ $assessmentsResult = $connection->query($assessmentsSql);
     </style>
 </head>
 <body>
+<div class="main-wrapper">
+    <header>
+        <h1 class="header-text">Update Score</h1>
+    </header>
     <div class="container">
-        <h2 class="text-center mb-4"><i class="fas fa-graduation-cap me-2"></i>Update Score</h2>
         
         <?php if ($message): ?>
             <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -183,7 +210,6 @@ $assessmentsResult = $connection->query($assessmentsSql);
         <?php endif; ?>
         
             <div id="step2" class="step" >
-                <h3 class="mb-3">Update Score</h3>
                 <form method="POST" action="">
                     <div class="mb-3">
                         <label for="assessment_id" class="form-label">Select Assessment</label>
@@ -267,6 +293,7 @@ $assessmentsResult = $connection->query($assessmentsSql);
         </div>
 
     </div> -->
+</div>
     <div id="notificationArea"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

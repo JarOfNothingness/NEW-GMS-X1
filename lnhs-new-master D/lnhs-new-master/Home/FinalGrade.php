@@ -48,6 +48,7 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -72,7 +73,7 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
 
         /* Header Styling */
         .page-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-color: #4a69bd;
             color: white;
             padding: 2rem;
             border-radius: 15px;
@@ -118,7 +119,7 @@ $current_subject = isset($_GET['subject']) ? $_GET['subject'] : '';
 
         /* Button Styling */
         .btn-primary {
-            background: var(--secondary-color);
+            background: #3f51b5;
             border: none;
             padding: 0.75rem 2rem;
             border-radius: 8px;

@@ -117,6 +117,30 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance Sheet</title>
     <style>
+        .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        }
+        header {
+                background-color: #4a69bd;
+                padding: 20px;
+                color: #fff;
+                font-size: 24px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                border-radius: 15px;
+        }
+
+        .header-text {
+                text-align: center;
+                margin: 0;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -160,7 +184,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             background-color: white;
         }
         button[type="submit"] {
-            background-color: darkblue;
+            background-color: #3f51b5;
             color: white;
             padding: 10px 15px;
             border: none;
@@ -373,7 +397,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             font-size: 14px;
         }
         .load-button {
-            background-color: darkblue;
+            background-color: red;
             color: white;
             border: none;
             cursor: pointer;
@@ -387,7 +411,7 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
             }
         }
         .legend-container {
-            text-align: right;
+            text-align: left;
             margin-bottom: 20px;
         }
         .legend-list {
@@ -426,8 +450,11 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>DAILY ATTENDANCE REPORT OF LEARNERS</h2>
+<div class="main-wrapper">
+    <header>
+        <h1 class="header-text">DAILY ATTENDANCE REPORT OF LEARNERS</h1>
+    </header>
+    <div class="container">
     <?php 
         if ($saved == 1) {
             echo "<div class='success-message'>Attendance has been successfully saved!</div>";
@@ -598,6 +625,8 @@ $form_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST');
     }
     ?>
 </div>
+</div>
+
 
 <div id="pointSetterModal" class="side-modal">
     <div class="side-modal-content">

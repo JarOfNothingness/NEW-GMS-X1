@@ -72,6 +72,7 @@ mysqli_data_seek($result, 0);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
+
         body {
             background-color: #f8f9fa;
             padding: 20px;
@@ -83,13 +84,15 @@ mysqli_data_seek($result, 0);
         }
 
         .page-title {
-            color: #2c3e50;
+            background-color: #4a69bd;
+            padding: 20px;
+            color: #fff;
+            font-size: 43px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border-radius: 15px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
         }
 
         .stats-card {
@@ -189,7 +192,7 @@ mysqli_data_seek($result, 0);
         .back-button {
             display: inline-block;
             padding: 10px 20px;
-            background: linear-gradient(45deg, #34495e, #2c3e50);
+            background-color: #3f51b5;
             color: #fff;
             text-decoration: none;
             border-radius: 25px;
@@ -200,7 +203,7 @@ mysqli_data_seek($result, 0);
         }
 
         .back-button:hover {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
+            background-color: #2980b9;
             color: #fff;
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
@@ -252,7 +255,7 @@ mysqli_data_seek($result, 0);
         </div>
     <?php endif; ?>
 
-    <a href="view_attendance.php" class="back-button">
+    <a href="view_attendance.php" class="back-button mt-3">
         <i class="fas fa-arrow-left"></i> Back to Attendance
     </a>
 

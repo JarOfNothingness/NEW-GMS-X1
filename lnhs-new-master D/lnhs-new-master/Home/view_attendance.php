@@ -109,6 +109,31 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Attendance</title>
     <style>
+        .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        }
+        header {
+                background-color: #4a69bd;
+                padding: 20px;
+                color: #fff;
+                font-size: 24px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                border-radius: 15px;
+                margin-bottom: 20px;
+        }
+
+        .header-text {
+                text-align: center;
+                margin: 0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -160,7 +185,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
         .load-button {
             width: 100%;
             padding: 10px 15px;
-            background-color: darkblue;
+            background-color: #3f51b5;
             color: white;
             border: none;
             border-radius: 4px;
@@ -257,7 +282,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
         .back-button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: darkblue;
+            background-color: #3f51b5;
             color: #fff;
             text-decoration: none;
             border-radius: 4px;
@@ -483,8 +508,12 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
     </style>
 </head>
 <body>
+    <div class="main-wrapper">
+    <header>
+        <h1 class="header-text">School Form 2 (SF2) Daily Attendance Report of Learners</h1>
+    </header>
     <div class="container">
-        <h2 class="report-title">School Form 2 (SF2) Daily Attendance Report of Learners</h2>
+    
         <button id="reportsButton" class="reports-button" onclick="toggleOverlay()">Reports</button>
 
         <!-- Updated compact sidebar report menu -->
@@ -666,6 +695,7 @@ if ($form_submitted && $school_year && $section && $subject_id && $month) {
 
         <a href="Attendance.php" class="back-button">Back to Attendance</a>
         <button onclick="printAttendance()" class="print-button">Print Attendance</button>
+    </div>
     </div>
     <script>
 

@@ -118,8 +118,11 @@ if ($isFilterApplied) {
 }
 ?>
 
-<div class="container mt-4">
-    <h3 class="text-dark">Student Records</h3>
+<div class="main-wrapper">
+    <header>
+        <h1 class="header-text">Student Records</h1>
+    </header>
+    <div class="container mt-4">
 
     <!-- Display selected filters (Grade & Section and School Year) dynamically -->
     <form method="GET" action="" class="mb-3">
@@ -207,7 +210,32 @@ if ($isFilterApplied) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
+
 <style>
+    .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    header {
+            background-color: #4a69bd;
+            padding: 20px;
+            color: #fff;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border-radius: 15px;
+    }
+
+    .header-text {
+            text-align: center;
+            margin: 0;
+    }
+    
     .container {
         background-color: #fff;
         padding: 20px;
@@ -230,6 +258,7 @@ if ($isFilterApplied) {
         text-align: left;
     }
 </style>
+
 
 <script>
     function fetchSections(schoolYear) {

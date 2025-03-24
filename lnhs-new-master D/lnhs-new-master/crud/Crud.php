@@ -51,7 +51,10 @@ if (isset($_SESSION['upload_success'])) {
 }
 
 ?>
-
+ <div class="main-wrapper">
+    <header>
+        <h1 class="header-text">Create Class</h1>
+    </header>
 <body>
     <div class="container mt-5">
         
@@ -281,6 +284,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <style>
+    .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    header {
+            background-color: #4a69bd;
+            padding: 20px;
+            color: #fff;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border-radius: 15px;
+    }
+
+    .header-text {
+            text-align: center;
+            margin: 0;
+    }
+
     .container {
         background-color: #fff;
         padding: 20px;
