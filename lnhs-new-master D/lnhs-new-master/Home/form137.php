@@ -7,6 +7,8 @@ if (isset($_SESSION['form_success'])) {
     unset($_SESSION['form_success']);
 }
 
+$userid = $_SESSION['userid'];
+
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
@@ -18,6 +20,7 @@ include('../LoginRegisterAuthentication/connection.php');
 $query = "SELECT 
             e.*,
             YEAR(e.birthdate) as batch_year,
+            s.`grade & section` as grade_section,
             CASE 
                 WHEN e.high_school_completer = 1 THEN 'Yes'
                 ELSE 'No'
@@ -31,6 +34,7 @@ $query = "SELECT
                 ELSE 'No'
             END as als_status
           FROM encoded_learner_data e
+          INNER JOIN students s on s.id = e.learner_id
           ORDER BY e.last_name ASC, e.first_name ASC";
 
 $result = mysqli_query($connection, $query);
@@ -323,6 +327,24 @@ mysqli_data_seek($result, 0);
                         <option value="Female">Female</option>
                     </select>
                 </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="gradeSectionFilter">
+                        <option value="">All Grade & Section</option>
+                        <?php
+                            $sectionsQuery = "SELECT DISTINCT `grade & section` FROM students WHERE user_id = ? ORDER BY `grade & section`";
+                            $stmt = mysqli_prepare($connection, $sectionsQuery);
+                            mysqli_stmt_bind_param($stmt, 'i', $userid);
+                            mysqli_stmt_execute($stmt);
+                            $sectionsResult = mysqli_stmt_get_result($stmt);
+                            while ($section = mysqli_fetch_assoc($sectionsResult)):
+                                $selected = (isset($_GET['section']) && $_GET['section'] == $section['grade & section']) ? 'selected' : '';
+                        ?>
+                                <option value="<?= htmlspecialchars($section['grade & section']) ?>" <?= $selected ?>>
+                                    <?= htmlspecialchars($section['grade & section']) ?>
+                                </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -337,6 +359,7 @@ mysqli_data_seek($result, 0);
                         <th>Birth Date</th>
                         <th>School</th>
                         <th>School Year</th>
+                        <th hidden>Grade and  Section</th>
                         <th>Status</th>
                         <th class="no-print">Actions</th>
                     </tr>
@@ -357,6 +380,7 @@ mysqli_data_seek($result, 0);
                             <td><?php echo date('M d, Y', strtotime($data['birthdate'])); ?></td>
                             <td><?php echo htmlspecialchars($data['elementary_school_name']); ?></td>
                             <td><?php echo htmlspecialchars($data['school_year']); ?></td>
+                            <td hidden><?php echo htmlspecialchars($data['grade_section']); ?></td>
                             <td>
                                 <?php if ($data['high_school_completer'] == 1): ?>
                                     <span class="badge-custom badge-high-school">High School</span>
@@ -444,6 +468,16 @@ $(document).ready(function() {
         updateUrlParams('school_year', searchTerm);
     });
 
+    $('#gradeSectionFilter').on('change', function() {
+        const searchTerm = this.value;
+        table.column(6) // School Year column
+            .search(searchTerm)
+            .draw();
+        
+        // Update URL with filter
+        updateUrlParams('grade_section', searchTerm);
+    });
+
     $('#genderFilter').on('change', function() {
         const searchTerm = this.value;
         table.column(2) // Sex column
@@ -470,12 +504,16 @@ $(document).ready(function() {
         const url = new URL(window.location.href);
         const schoolYear = url.searchParams.get('school_year');
         const gender = url.searchParams.get('gender');
+        const gradeSection = url.searchParams.get('grade_section');
 
         if (schoolYear) {
             $('#schoolYearFilter').val(schoolYear).trigger('change');
         }
         if (gender) {
             $('#genderFilter').val(gender).trigger('change');
+        }
+        if (gradeSection) {
+            $('#gradeSectionFilter').val(gradeSection).trigger('change');
         }
     }
 

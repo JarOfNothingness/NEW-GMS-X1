@@ -46,7 +46,9 @@ $query = "SELECT
           FROM 
             students s
           WHERE 
-            s.user_id = ?"; 
+            s.user_id = ?
+          AND s.gender = 'Female'
+          ORDER BY s.learners_name asc"; 
             // AND s.school_year = ? 
             // AND s.`grade & section` = ?"; // Keep only 3 placeholders
 
@@ -54,7 +56,30 @@ $query = "SELECT
 $stmt = mysqli_prepare($connection, $query);
 mysqli_stmt_bind_param($stmt, 's', $userid); // Bind only 3 variables
 mysqli_stmt_execute($stmt);
-$studentResult = mysqli_stmt_get_result($stmt);
+$studentResultFemale = mysqli_stmt_get_result($stmt);
+
+$query = "SELECT 
+            s.id,
+            s.learners_name, 
+            s.gender,
+            s.`grade & section`,
+            s.school_year
+          FROM 
+            students s
+          WHERE 
+            s.user_id = ?
+          AND s.gender = 'Male'
+          ORDER BY s.learners_name asc";
+        
+          
+            // AND s.school_year = ? 
+            // AND s.`grade & section` = ?"; // Keep only 3 placeholders
+
+// Adjust the bind_param to match the correct number of arguments
+$stmt = mysqli_prepare($connection, $query);
+mysqli_stmt_bind_param($stmt, 's', $userid); // Bind only 3 variables
+mysqli_stmt_execute($stmt);
+$studentResultMale = mysqli_stmt_get_result($stmt);
 
 
 // Query to fetch student data for the current user, removing duplicates by grouping by learner's name, grade & section, quarter, and subject
@@ -77,7 +102,8 @@ if ($isFilterApplied) {
     LEFT JOIN 
         student_subjects ss ON s.id = ss.student_id
     WHERE 
-        s.user_id = ?";
+        s.user_id = ?
+    AND s.gender = 'Female'";
 
     $queryParams = array($userid);
 
@@ -109,12 +135,66 @@ if ($isFilterApplied) {
         s.learners_name, 
         s.`grade & section`, 
         s.gender, 
-        s.school_year";
+        s.school_year
+        ORDER BY s.learners_name asc";
 
     $stmt = mysqli_prepare($connection, $query);
     mysqli_stmt_bind_param($stmt, str_repeat('s', count($queryParams)), ...$queryParams);
     mysqli_stmt_execute($stmt);
-    $studentResult = mysqli_stmt_get_result($stmt);
+    $studentResultFemale= mysqli_stmt_get_result($stmt);
+
+    $query = "SELECT 
+        s.id,
+        s.learners_name, 
+        s.`grade & section`, 
+        s.gender, 
+        s.school_year,
+        GROUP_CONCAT(IFNULL(ss.description, '') SEPARATOR ', ') AS subjects
+    FROM 
+        students s
+    LEFT JOIN 
+        student_subjects ss ON s.id = ss.student_id
+    WHERE 
+        s.user_id = ?
+    AND s.gender = 'Male'";
+
+    $queryParams = array($userid);
+
+    // Apply filters
+    if (isset($_GET['subject']) && $_GET['subject'] !== '') {
+        $query .= " AND ss.description = ?";
+        $queryParams[] = $_GET['subject'];
+    }
+
+    if (isset($_GET['section']) && $_GET['section'] !== '') {
+        $query .= " AND s.`grade & section` = ?";
+        $queryParams[] = $_GET['section'];
+    }
+
+    if (isset($_GET['school_year']) && $_GET['school_year'] !== '') {
+        $query .= " AND s.school_year = ?";
+        $queryParams[] = $_GET['school_year'];
+    }
+
+    if (isset($_GET['search']) && $_GET['search'] !== '') {
+        $query .= " AND (s.learners_name LIKE ? OR ss.description LIKE ?)";
+        $searchTerm = '%' . $_GET['search'] . '%';
+        $queryParams[] = $searchTerm;
+        $queryParams[] = $searchTerm;
+    }
+
+    $query .= " GROUP BY 
+        s.id,
+        s.learners_name, 
+        s.`grade & section`, 
+        s.gender, 
+        s.school_year
+        ORDER BY s.learners_name asc";
+
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, str_repeat('s', count($queryParams)), ...$queryParams);
+    mysqli_stmt_execute($stmt);
+    $studentResultMale = mysqli_stmt_get_result($stmt);
 }
 ?>
 
@@ -177,28 +257,59 @@ if ($isFilterApplied) {
         </div>
     </div> -->
 
-    <?php if (mysqli_num_rows($studentResult) == 0): ?>
+    <?php if (mysqli_num_rows($studentResultMale) == 0): ?>
         <p>No students found.</p>
     <?php else: ?>
+        <h1 style="margin-top: 50px;"> Male </h1>
         <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped">
                 <thead class="table-primary">
                     <tr>
                         <th>Student ID</th>
                         <th>Learner's Name</th>
-                        <th>Gender</th>
+                        <!-- <th>Gender</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    while ($row = mysqli_fetch_assoc($studentResult)): 
+                    if($isFilterApplied):
+                    while ($row = mysqli_fetch_assoc($studentResultMale)): 
                     ?>
                         <tr>
                             <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
                             <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td>
+                            <!-- <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td> -->
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endwhile; endif;?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php if (mysqli_num_rows($studentResultFemale) == 0): ?>
+        <p>No students found.</p>
+    <?php else: ?>     
+        <h1 style="margin-top: 50px;"> Female </h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Learner's Name</th>
+                        <!-- <th>Gender</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    if($isFilterApplied):
+                    while ($row = mysqli_fetch_assoc($studentResultFemale)): 
+                    ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
+                            <td><?= htmlspecialchars($row['learners_name'] ?? ''); ?></td>
+                            <!-- <td><?= htmlspecialchars($row['gender'] ?? ''); ?></td> -->
+                        </tr>
+                    <?php endwhile; endif; ?>
                 </tbody>
             </table>
         </div>
